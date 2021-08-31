@@ -28,7 +28,7 @@ enum CalcButton: String {
     case decimal = "."
     case percent = "%"
     case negative = "+/-"
-
+    
     //버튼 색상
     var buttonColor: Color {
         switch self {
@@ -50,7 +50,7 @@ enum Operation {
 struct ContentView: View {
     
     @State var value = "0"
-    
+    @State var runningNumber = 0
     @State var currentOperation: Operation = .none
     
     let buttons: [[CalcButton]] = [
@@ -59,7 +59,7 @@ struct ContentView: View {
         [.four, .five, .six, .subtract],
         [.one, .two, .three, .add],
         [.zero, .decimal, .equal],
-
+        
     ]
     
     var body: some View {
@@ -76,7 +76,7 @@ struct ContentView: View {
                 //View를 가로로 정렬
                 HStack {
                     //텍스트를 가장 오른쪽까지 이동
-                     Spacer()
+                    Spacer()
                     Text(value)
                         .foregroundColor(.white)
                         .font(.system(size: 100
@@ -89,24 +89,24 @@ struct ContentView: View {
                 ForEach(buttons, id: \.self) { row in
                     //HStack 가로로
                     HStack(spacing: 12) {
-                    ForEach(row, id: \.self) { item in
-                        Button(action: {
-                            //버튼을 클릭했을때 적용
-                            self.didTap(button: item)
-                        }, label: {
-                            Text(item.rawValue)
-                                //버튼 크기 조절
-                                .frame(
-                                    width: self.buttonWidth(item: item),
-                                    height: self.buttonHeight()
-                                )
-                                .background(item.buttonColor)
-                                .foregroundColor(.white)
-                                //코너지름값
-                                .cornerRadius(self.buttonWidth(item: item)/2)
-                                //패딩
-                                //.padding()
-                                .font(.system(size: 32))
+                        ForEach(row, id: \.self) { item in
+                            Button(action: {
+                                //버튼을 클릭했을때 적용
+                                self.didTap(button: item)
+                            }, label: {
+                                Text(item.rawValue)
+                                    //버튼 크기 조절
+                                    .frame(
+                                        width: self.buttonWidth(item: item),
+                                        height: self.buttonHeight()
+                                    )
+                                    .background(item.buttonColor)
+                                    .foregroundColor(.white)
+                                    //코너지름값
+                                    .cornerRadius(self.buttonWidth(item: item)/2)
+                                    //패딩
+                                    //.padding()
+                                    .font(.system(size: 32))
                             })
                         }
                     }
@@ -122,8 +122,20 @@ struct ContentView: View {
         case .add, .subtract, .mutliply, .divide, .equal:
             if button == .add {
                 self.currentOperation = .add
+                self.runningNumber += Int(self.value) ?? 0
             }
-
+            else if button == .subtract {
+                self.currentOperation = .subtract
+            }
+            else if button == .mutliply {
+                self.currentOperation = .multiply
+            }
+            else if button == .divide {
+                self.currentOperation = .divide
+            }
+            else if button == .equal {
+                self.currentOperation = .equal
+            }
         case .clear:
             self.value = "0"
             break
